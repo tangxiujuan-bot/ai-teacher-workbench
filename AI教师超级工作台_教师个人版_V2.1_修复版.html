@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI教师超级工作台 · 教师自己的AI工作台</title>
+<style>
+:root{
+  --bg:#f5f7fb;--panel:#fff;--panel2:#f8faff;--line:#e7ebf3;
+  --text:#172033;--muted:#74809a;--blue:#356df3;--blue2:#5b7cff;
+  --purple:#7357ee;--green:#18a875;--orange:#f39b37;--red:#e85d75;
+  --nav:#0b1630;--nav2:#111f42;--shadow:0 8px 28px rgba(30,48,90,.07)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Arial,"Microsoft YaHei",sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+aside{width:232px;position:fixed;inset:0 auto 0 0;background:linear-gradient(180deg,var(--nav),#091226);color:#dbe5ff;padding:16px 12px;z-index:20}
+.logo{display:flex;gap:10px;align-items:center;padding:7px 8px 20px}
+.mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#4b8cff,#7958f5);display:grid;place-items:center;font-weight:800;box-shadow:0 8px 22px #356df344}
+.logo b{font-size:14px}.logo small{display:block;color:#8292b5;margin-top:2px}
+.nav-title{font-size:10px;color:#647596;padding:10px 10px 5px;letter-spacing:1px}
+.nav button{width:100%;border:0;background:none;color:#9eacc8;text-align:left;padding:10px 11px;border-radius:9px;margin:2px 0}
+.nav button:hover,.nav button.active{background:#17294f;color:#fff}
+.nav button.active:before{content:"";display:inline-block;width:3px;height:15px;background:#5b8bff;border-radius:3px;vertical-align:-3px;margin-right:7px}
+.user{position:absolute;bottom:15px;left:12px;right:12px;padding:11px;border:1px solid #21345c;border-radius:11px;background:#0e1b37}
+.user small{color:#7182a4}.user-row{display:flex;align-items:center;gap:9px}.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#315bb5;color:#fff;font-weight:bold}
+main{margin-left:232px;flex:1;min-width:0}
+.top{height:64px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:#ffffffdd;backdrop-filter:blur(12px);position:sticky;top:0;z-index:10}
+.search{width:360px;padding:10px 13px;background:#f6f8fc;border:1px solid var(--line);border-radius:9px;outline:none}
+.top-right{display:flex;align-items:center;gap:16px;color:var(--muted)}.notice{position:relative}.dot{position:absolute;width:6px;height:6px;border-radius:50%;background:#ee6178;right:-2px;top:0}
+.content{padding:24px 28px 45px;max-width:1500px;margin:auto}.page{display:none}.page.active{display:block}
+.hero{border:1px solid #dfe6fb;border-radius:18px;background:linear-gradient(120deg,#eef4ff,#f6f2ff);padding:27px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:390px;height:390px;right:-140px;top:-190px;border-radius:50%;background:radial-gradient(circle,#7b72ff22,transparent 66%)}
+.eyebrow{font-size:11px;color:#5272cf;letter-spacing:1.4px;font-weight:800}.hero h1{font-size:27px;margin:9px 0 6px}.hero p{color:#66728c;max-width:760px;margin:0}
+.actions{display:flex;gap:9px;margin-top:18px}
+.primary,.secondary{padding:10px 15px;border-radius:8px;font-weight:700}.primary{background:linear-gradient(135deg,var(--blue),var(--purple));border:0;color:#fff}.secondary{background:#fff;border:1px solid #d8dfef;color:#40506d}
+.super-entry{margin-top:16px;background:#101d39;border-radius:16px;padding:17px;color:#fff;box-shadow:var(--shadow)}
+.super-top{display:flex;justify-content:space-between;align-items:center}.super-top h3{margin:0}.super-top span{font-size:11px;color:#93a6cb}
+.super-input{display:flex;gap:9px;margin-top:12px}.super-input input{flex:1;border:1px solid #31466e;background:#172746;color:#fff;padding:12px;border-radius:9px;outline:none}.super-input button{background:#4c78ff;border:0;color:#fff;border-radius:9px;padding:0 18px;font-weight:700}
+.suggestions{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}.suggestions button{background:#182a4b;color:#aebee0;border:1px solid #294064;border-radius:99px;padding:5px 9px;font-size:11px}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.mt{margin-top:15px}.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;box-shadow:0 3px 12px rgba(25,40,75,.025)}
+.card h3{margin:0 0 7px}.muted{color:var(--muted)}.small{font-size:12px}.tiny{font-size:11px}
+.stat{font-size:25px;font-weight:800;margin:6px 0}.tag{display:inline-block;padding:4px 8px;border-radius:99px;background:#edf4ff;color:#4d73d7;font-size:11px;margin-right:5px}.green{background:#e9f8f2;color:#16835e}.purple{background:#f0edff;color:#6750d2}.orange{background:#fff3e3;color:#bd741e}
+.section{display:flex;justify-content:space-between;align-items:end;margin:19px 0 10px}.section h2{margin:0;font-size:21px}.section p{margin:3px 0 0}
+.quick{display:flex;gap:11px;align-items:center;transition:.15s}.quick:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.icon{width:40px;height:40px;border-radius:10px;background:#edf3ff;color:#4770df;display:grid;place-items:center;font-size:18px}
+.task{padding:11px 0;border-bottom:1px solid #eef1f6}.task:last-child{border:0}.task b{font-size:13px}.task small{display:block;color:var(--muted);margin-top:3px}
+.task-line{display:flex;justify-content:space-between;gap:10px;align-items:center}.check{width:17px;height:17px;border:1px solid #ccd5e5;border-radius:5px;display:inline-block;vertical-align:-4px;margin-right:7px}
+.workspace{display:grid;grid-template-columns:215px 1fr;gap:14px}.toolbox button{display:block;width:100%;padding:9px;border:0;background:none;color:#64718a;text-align:left;border-radius:8px}.toolbox button:hover,.toolbox button.sel{background:#edf3ff;color:#356df3}.toolbox hr{border:0;border-top:1px solid var(--line);margin:13px 0}
+.editor input,.editor textarea,.editor select,.field input,.field select,.field textarea{width:100%;padding:10px;background:#fbfcff;border:1px solid #dfe5ef;border-radius:8px;color:#26334d;outline:none}.editor textarea,.field textarea{min-height:120px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:10px 0}.label{display:block;color:#77839a;font-size:11px;margin:7px 0 5px}
+.result{margin-top:13px;background:#f8faff;border:1px solid #dfe6f4;border-radius:9px;padding:14px;line-height:1.75}.result h4{margin:0 0 8px}.result ul,.result ol{margin:7px 0 0;padding-left:21px}
+.flow{display:flex;align-items:center;gap:8px;overflow:auto;padding:11px 0}.step{min-width:145px;background:#f8faff;border:1px solid #e1e7f1;padding:12px;border-radius:10px}.step b{display:block}.step span{font-size:11px;color:var(--muted)}.arrow{font-size:18px;color:#6684db}
+.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{text-align:left;padding:11px;border-bottom:1px solid #edf0f5}.table th{color:var(--muted);font-weight:normal}
+.progress{height:7px;background:#edf0f5;border-radius:99px;overflow:hidden;margin:6px 0 12px}.progress i{display:block;height:100%;background:linear-gradient(90deg,#4e80f8,#795eea)}
+.banner{padding:13px 15px;border-radius:11px;background:#fff8e9;border:1px solid #f6dfad;color:#7b622e;font-size:12px}
+.kpi-label{color:var(--muted);font-size:11px}.split{display:flex;justify-content:space-between;align-items:center}
+.recent{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eef1f6}.recent:last-child{border:0}
+.mini-icon{width:32px;height:32px;border-radius:8px;background:#f0f4ff;display:grid;place-items:center;color:#4c71dc}
+.chat{display:grid;grid-template-columns:1fr 285px;gap:14px}.chatbox{height:480px;display:flex;flex-direction:column}.messages{flex:1;overflow:auto}.msg{max-width:78%;padding:10px 12px;border-radius:11px;margin:7px 0;line-height:1.65}.ai{background:#f0f4fb}.me{background:#e8efff;color:#294eac;margin-left:auto}.chatinput{display:flex;gap:7px;border-top:1px solid var(--line);padding-top:11px}.chatinput input{flex:1;background:#fbfcff;border:1px solid #dce3ef;padding:10px;border-radius:8px;outline:none}
+.toast{display:none;position:fixed;right:25px;bottom:25px;background:#172640;color:#fff;border:1px solid #2f456b;padding:12px 16px;border-radius:9px;z-index:50}.toast.show{display:block}
+.role-tabs{display:flex;gap:7px}.role-tabs button{border:1px solid #dfe5ef;background:#fff;color:#64718a;padding:7px 10px;border-radius:8px}.role-tabs button.active{background:#edf3ff;color:#356df3;border-color:#bfd0ff}
+@media(max-width:1000px){aside{width:190px}.nav-title{display:none}main{margin-left:190px}.g4{grid-template-columns:repeat(2,1fr)}.workspace,.chat{grid-template-columns:1fr}}
+@media(max-width:700px){aside{display:none}main{margin-left:0}.top{padding:0 14px}.search{width:48%}.content{padding:16px}.g4,.g3,.g2{grid-template-columns:1fr}.row{grid-template-columns:1fr}.super-input{flex-direction:column}.super-input button{padding:11px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="logo"><div class="mark">AI</div><div><b>AI教师超级工作台</b><small>AI Teacher Workspace</small></div></div>
+  <div class="nav-title">我的工作</div>
+  <div class="nav">
+    <button class="active" data-p="home">◈　工作台</button>
+    <button data-p="prepare">▣　AI备课</button>
+    <button data-p="ppt">▤　AI课件</button>
+    <button data-p="question">◇　AI出题</button>
+    <button data-p="research">◎　AI教研</button>
+    <button data-p="class">♧　班主任</button>
+  </div>
+  <div class="nav-title">AI能力</div>
+  <div class="nav">
+    <button data-p="agent">✦　AI员工 / 智能体</button>
+    <button data-p="workflow">↻　我的工作流</button>
+    <button data-p="assets">▦　知识库 & 模板</button>
+    <button data-p="growth">↗　能力成长</button>
+  </div>
+  <div class="nav-title">个人设置</div>
+  <div class="nav"><button data-p="admin">⚙　我的设置</button></div>
+  <div class="user"><div class="user-row"><div class="avatar">王</div><div><b>王老师</b><br><small>数学组 · 教师账号</small></div></div></div>
+</aside>
+
+<main>
+<div class="top">
+  <input class="search" placeholder="⌕  搜索教案、模板、知识资料、工作流……">
+  <div class="top-right"><span>本周已节省 <b style="color:#356df3">6.4h</b></span><span class="notice">通知 3<i class="dot"></i></span><b>王</b></div>
+</div>
+
+<div class="content">
+
+<section id="home" class="page active">
+  <div class="hero">
+    <div class="eyebrow">MY AI TEACHER WORKSPACE</div>
+    <h1>王老师，今天准备先做什么？</h1>
+    <p>这是教师自己的 AI 工作台。不用记工具、不用来回切换页面，直接告诉 AI 你想完成什么。</p>
+    <div class="actions"><button class="primary" onclick="focusSuper()">✦ 直接告诉AI</button><button class="secondary" onclick="go('prepare')">进入传统工作流</button></div>
+  </div>
+
+  <div class="super-entry">
+    <div class="super-top"><h3>告诉 AI，你今天想完成什么</h3><span>你的 AI 工作入口</span></div>
+    <div class="super-input"><input id="superInput" placeholder="例如：帮我准备三年级数学《分数的初步认识》公开课，要有互动活动和分层作业"><button onclick="runSuper()">生成方案</button></div>
+    <div class="suggestions">
+      <button onclick="fillSuper('帮我准备一节三年级数学公开课，要有互动活动')">公开课备课</button>
+      <button onclick="fillSuper('帮我生成下周数学单元练习题，基础+提升各一组')">单元练习</button>
+      <button onclick="fillSuper('帮我整理本周数学组教研会议纪要，并提取行动项')">教研纪要</button>
+    </div>
+  </div>
+
+  <div class="grid g4 mt">
+    <div class="card"><span class="kpi-label">本周完成AI任务</span><div class="stat">28</div><span class="tag green">+18%</span></div>
+    <div class="card"><span class="kpi-label">预计节省时间</span><div class="stat">6.4h</div><span class="tag">本周</span></div>
+    <div class="card"><span class="kpi-label">我的教学资产</span><div class="stat">36</div><span class="tag purple">模板+案例</span></div>
+    <div class="card"><span class="kpi-label">AI能力等级</span><div class="stat">L3</div><span class="tag orange">正在成长</span></div>
+  </div>
+
+  <div class="section"><div><h2>今天的工作</h2><p class="muted small">系统把任务、截止时间和AI可协助部分放在一起</p></div><button class="secondary" onclick="toast('任务中心将在V2.1开放')">任务设置</button></div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="task-line"><b><span class="check"></span>完成《分数的初步认识》备课</b><span class="tag orange">14:30</span></div>
+      <div class="small muted" style="padding-left:24px">AI可协助：教案初稿 → 活动设计 → 提问 → 作业</div>
+      <div class="task-line"><b><span class="check"></span>生成周五数学练习题</b><span class="tag">16:00</span></div>
+      <div class="small muted" style="padding-left:24px">AI可协助：按知识点生成 + 难度分层</div>
+      <div class="task-line"><b><span class="check"></span>整理数学组教研纪要</b><span class="tag purple">17:30</span></div>
+      <div class="small muted" style="padding-left:24px">AI可协助：会议纪要 → 行动项 → 归档</div>
+    </div>
+    <div class="card">
+      <div class="split"><h3>最近使用</h3><span class="muted tiny">全部</span></div>
+      <div class="recent"><div class="mini-icon">▣</div><div><b>三年级《分数》教案</b><br><span class="muted tiny">今天 10:24 · 已修改</span></div></div>
+      <div class="recent"><div class="mini-icon">◇</div><div><b>数学单元练习题</b><br><span class="muted tiny">昨天 16:08 · 已导出</span></div></div>
+      <div class="recent"><div class="mini-icon">◎</div><div><b>数学组教研纪要</b><br><span class="muted tiny">昨天 15:42 · 已归档</span></div></div>
+    </div>
+  </div>
+
+  <div class="section"><div><h2>高频工作</h2><p class="muted small">把最常用的动作放到首页，而不是让老师记菜单</p></div></div>
+  <div class="grid g4">
+    <div class="card quick" onclick="go('prepare')"><div class="icon">▣</div><div><h3>AI备课</h3><span class="muted small">教案 / 活动 / 提问</span></div></div>
+    <div class="card quick" onclick="go('ppt')"><div class="icon">▤</div><div><h3>AI课件</h3><span class="muted small">教案 → PPT结构</span></div></div>
+    <div class="card quick" onclick="go('question')"><div class="icon">◇</div><div><h3>AI出题</h3><span class="muted small">知识点 → 分层练习</span></div></div>
+    <div class="card quick" onclick="go('research')"><div class="icon">◎</div><div><h3>AI教研</h3><span class="muted small">资料 → 结论 → 行动项</span></div></div>
+  </div>
+</section>
+
+<section id="prepare" class="page">
+  <div class="section"><div><h2>AI备课</h2><p class="muted">不是只生成教案，而是生成一份可直接修改的“备课包”</p></div><span class="tag">工作流 01</span></div>
+  <div class="workspace">
+    <div class="card toolbox"><b>备课空间</b><button class="sel">▣ 新建备课包</button><button>▤ 我的教案</button><button>☆ 优秀案例</button><button onclick="go('assets')">▦ 我的模板</button><hr><span class="muted tiny">推荐流程</span><div class="step" style="margin-top:8px">① 教学目标</div><div class="step" style="margin-top:7px">② AI生成初稿</div><div class="step" style="margin-top:7px">③ 教师审核</div><div class="step" style="margin-top:7px">④ 一键生成课件/练习</div></div>
+    <div class="card editor">
+      <div class="split"><div><h3>创建备课包</h3><span class="muted tiny">结果会进入“我的资产”，可继续生成课件与练习</span></div><span class="tag green">可编辑</span></div>
+      <div class="row"><div><label class="label">年级</label><select id="grade"><option>三年级</option><option>四年级</option><option>五年级</option></select></div><div><label class="label">学科</label><select><option>数学</option><option>语文</option><option>英语</option><option>科学</option></select></div></div>
+      <div class="row"><div><label class="label">课题</label><input id="topic" value="分数的初步认识"></div><div><label class="label">课时</label><input value="1课时"></div></div>
+      <label class="label">教学目标 / 特殊要求</label><textarea id="goal">理解分数的基本含义，结合生活情境认识几分之一，并设计一个学生参与度高的课堂活动。</textarea>
+      <div style="margin-top:12px"><button class="primary" onclick="plan()">✦ 生成备课包</button><button class="secondary" style="margin-left:7px" onclick="toast('已保存为备课模板')">保存为模板</button></div>
+      <div id="plan" class="result" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<section id="ppt" class="page">
+  <div class="section"><div><h2>AI课件</h2><p class="muted">优先从已有教案、模板和我的知识库生成，而不是重新输入一遍</p></div></div>
+  <div class="grid g2">
+    <div class="card"><h3>课件来源</h3><label class="label">选择已有内容</label><select><option>三年级《分数》备课包 · 今天</option><option>从零输入课题</option></select><label class="label">课件风格</label><select><option>清晰课堂型</option><option>互动活动型</option><option>知识图解型</option></select><label class="label">课堂时长</label><select><option>40分钟</option><option>45分钟</option></select><button class="primary" style="margin-top:13px" onclick="ppt()">生成PPT结构</button></div>
+    <div class="card"><div class="split"><h3>生成结果</h3><span class="tag">可编辑</span></div><div id="pptResult" class="result"><span class="muted">选择备课包后生成课件结构。</span></div></div>
+  </div>
+</section>
+
+<section id="question" class="page">
+  <div class="section"><div><h2>AI出题</h2><p class="muted">重点增加“分层、依据、审核”，让生成结果更接近真实教学</p></div></div>
+  <div class="grid g2">
+    <div class="card"><h3>出题任务</h3><label class="label">知识点</label><input id="qpoint" value="分数的初步认识"><label class="label">题型</label><select><option>混合题型</option><option>选择题</option><option>填空题</option><option>应用题</option></select><label class="label">难度结构</label><select><option>基础 60% + 提升 30% + 探究 10%</option><option>基础 70% + 提升 30%</option><option>均衡</option></select><label class="label">题量</label><select><option>10题</option><option>15题</option><option>20题</option></select><button class="primary" style="margin-top:13px" onclick="questions()">✦ 生成练习</button></div>
+    <div class="card"><div class="split"><h3>题目预览</h3><span class="tag green">待审核</span></div><div id="qresult" class="result"><span class="muted">生成后展示题目、答案与知识点依据。</span></div></div>
+  </div>
+</section>
+
+<section id="research" class="page">
+  <div class="section"><div><h2>AI教研</h2><p class="muted">从“开会”变成“资料沉淀 → 结论 → 行动 → 复用”</p></div></div>
+  <div class="grid g3">
+    <div class="card"><h3>会议纪要</h3><p class="muted small">录入会议要点或粘贴记录，自动提炼结论与行动项。</p><button class="secondary" onclick="toast('已创建教研纪要任务')">开始整理</button></div>
+    <div class="card"><h3>教案对比</h3><p class="muted small">对比多份教案，提取教学目标、活动设计与作业差异。</p><button class="secondary" onclick="toast('已进入教案对比')">开始对比</button></div>
+    <div class="card"><h3>案例沉淀</h3><p class="muted small">把优秀课例整理为学校可检索、可复用的知识资产。</p><button class="secondary" onclick="go('assets')">进入知识库</button></div>
+  </div>
+  <div class="card mt"><div class="split"><h3>本周数学组教研工作台</h3><span class="tag">示例数据</span></div><table class="table"><tr><th>任务</th><th>负责人</th><th>状态</th><th>AI协助</th></tr><tr><td>《分数》单元集体备课</td><td>王老师</td><td><span class="tag green">已完成</span></td><td>教案结构整理</td></tr><tr><td>公开课案例复盘</td><td>李老师</td><td><span class="tag">进行中</span></td><td>案例对比</td></tr><tr><td>本周教研纪要</td><td>王老师</td><td><span class="tag purple">待处理</span></td><td>纪要+行动项</td></tr></table></div>
+</section>
+
+<section id="class" class="page">
+  <div class="section"><div><h2>AI班主任</h2><p class="muted">高频事务模板化，敏感信息最小化使用，发送前由教师确认</p></div></div>
+  <div class="grid g3">
+    <div class="card"><h3>家长沟通</h3><p class="muted small">根据事件生成正式版、温和版等沟通草稿。</p><button class="secondary" onclick="toast('已创建沟通草稿')">创建草稿</button></div>
+    <div class="card"><h3>班级通知</h3><p class="muted small">活动信息 → 家长群通知 → 待办提醒。</p><button class="secondary" onclick="toast('已生成通知草稿')">生成通知</button></div>
+    <div class="card"><h3>学生评价</h3><p class="muted small">根据教师记录辅助整理成长评价，教师最终确认。</p><button class="secondary" onclick="toast('已进入评价模板')">开始评价</button></div>
+  </div>
+  <div class="banner mt">隐私提示：真实部署时应根据学校制度设置数据权限、保存期限、审计记录，并避免将不必要的学生敏感信息输入外部模型。</div>
+</section>
+
+<section id="agent" class="page">
+  <div class="section"><div><h2>我的AI员工 / 智能体</h2><p class="muted">把重复工作交给AI员工，你负责判断、修改和最终确认。</p></div><button class="primary" onclick="toast('智能体创建器将在V2.1开放')">＋ 创建智能体</button></div>
+  <div class="chat">
+    <div class="card chatbox"><div class="messages" id="messages"><div class="msg ai">你好，我是“公开课备课智能体”。你可以直接说：<b>帮我准备下周三年级数学公开课。</b></div><div class="msg ai">我会拆成：任务理解 → 调取模板/知识 → 教案 → 课件结构 → 课堂问题 → 作业 → 备课包，并把每一步结果交给你审核。</div></div><div class="chatinput"><input id="chat" placeholder="告诉智能体你想完成什么任务……"><button class="primary" onclick="send()">发送</button></div></div>
+    <div class="card"><h3>我的智能体</h3><div class="task"><b>✦ 公开课备课智能体</b><small>6步任务流 · 已启用</small></div><div class="task"><b>✦ 教研会议助手</b><small>纪要+行动项 · 已启用</small></div><div class="task"><b>✦ 班主任事务助手</b><small>通知+沟通+归档 · 草稿模式</small></div></div>
+  </div>
+</section>
+
+
+<section id="workflow" class="page">
+  <div class="section"><div><h2>我的工作流</h2><p class="muted">把重复工作变成“一次搭建，反复使用”。</p></div><button class="primary" onclick="toast('工作流创建器将在下一版本开放')">＋ 创建工作流</button></div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="split"><h3>公开课备课工作流</h3><span class="tag green">已启用</span></div>
+      <p class="muted small">输入课题 → 教案 → 课堂活动 → 课件结构 → 分层作业 → 备课包</p>
+      <div class="flow"><div class="step"><b>输入课题</b><span>1步</span></div><span class="arrow">→</span><div class="step"><b>AI备课</b><span>自动</span></div><span class="arrow">→</span><div class="step"><b>课件</b><span>自动</span></div><span class="arrow">→</span><div class="step"><b>审核</b><span>你确认</span></div></div>
+      <button class="secondary" onclick="go('prepare')">运行工作流</button>
+    </div>
+    <div class="card">
+      <div class="split"><h3>每周教研整理</h3><span class="tag purple">已启用</span></div>
+      <p class="muted small">会议记录 → 纪要 → 行动项 → 优秀案例 → 我的知识库</p>
+      <div class="flow"><div class="step"><b>会议记录</b><span>输入</span></div><span class="arrow">→</span><div class="step"><b>AI整理</b><span>自动</span></div><span class="arrow">→</span><div class="step"><b>归档</b><span>自动</span></div></div>
+      <button class="secondary" onclick="toast('已准备运行教研工作流')">运行工作流</button>
+    </div>
+  </div>
+</section>
+<section id="assets" class="page">
+  <div class="section"><div><h2>我的教学资产</h2><p class="muted">你的教案、课件、模板、案例和知识资料，都会越来越懂你。</p></div><button class="primary" onclick="toast('上传入口将在V2.1开放')">＋ 添加资料</button></div>
+  <div class="grid g4">
+    <div class="card"><span class="kpi-label">我的模板</span><div class="stat">36</div><span class="tag green">可复用</span></div>
+    <div class="card"><span class="kpi-label">我的知识资料</span><div class="stat">128</div><span class="tag">示例</span></div>
+    <div class="card"><span class="kpi-label">优秀课例</span><div class="stat">42</div><span class="tag purple">可检索</span></div>
+    <div class="card"><span class="kpi-label">我的收藏</span><div class="stat">19</div><span class="tag orange">最近使用</span></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card"><div class="split"><h3>模板中心</h3><span class="muted tiny">按任务找模板</span></div><div class="recent"><div class="mini-icon">▣</div><div><b>公开课备课模板</b><br><span class="muted tiny">备课 · 数学 · 公开课</span></div></div><div class="recent"><div class="mini-icon">◇</div><div><b>单元练习模板</b><br><span class="muted tiny">出题 · 分层作业</span></div></div><div class="recent"><div class="mini-icon">◎</div><div><b>教研会议纪要模板</b><br><span class="muted tiny">教研 · 会议</span></div></div></div>
+    <div class="card"><div class="split"><h3>我的知识库</h3><span class="tag">示例</span></div><div class="recent"><div class="mini-icon">▤</div><div><b>我的课程资料</b><br><span class="muted tiny">已索引 · 23份资料</span></div></div><div class="recent"><div class="mini-icon">▤</div><div><b>我的优秀教案</b><br><span class="muted tiny">已索引 · 38份资料</span></div></div><div class="recent"><div class="mini-icon">▤</div><div><b>我的教研案例</b><br><span class="muted tiny">已索引 · 67份资料</span></div></div></div>
+  </div>
+</section>
+
+<section id="growth" class="page">
+  <div class="section"><div><h2>AI能力成长</h2><p class="muted">从会用工具，到能把AI嵌入自己的教学工作</p></div></div>
+  <div class="grid g4"><div class="card"><span class="tag">L1</span><h3>AI认知</h3><p class="muted small">知道AI能解决什么问题。</p></div><div class="card"><span class="tag">L2</span><h3>AI工具</h3><p class="muted small">独立完成基础任务。</p></div><div class="card" style="border-color:#b8caff"><span class="tag purple">L3 · 当前</span><h3>AI任务</h3><p class="muted small">用AI完成真实教学任务。</p></div><div class="card"><span class="tag green">L4-L5</span><h3>工作流 / 智能体</h3><p class="muted small">设计并复用完整工作流。</p></div></div>
+  <div class="card mt"><h3>我的能力进度</h3><p class="muted small">AI工具使用　82%</p><div class="progress"><i style="width:82%"></i></div><p class="muted small">真实任务应用　74%</p><div class="progress"><i style="width:74%"></i></div><p class="muted small">工作流设计　48%</p><div class="progress"><i style="width:48%"></i></div><p class="muted small">智能体应用　32%</p><div class="progress"><i style="width:32%"></i></div></div>
+</section>
+
+<section id="admin" class="page">
+  <div class="section"><div><h2>我的工作与使用设置</h2><p class="muted">把工作台调成真正适合你的样子。</p></div></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>我的教师档案</h3>
+      <div class="row">
+        <div><label class="label">姓名</label><input value="王老师"></div>
+        <div><label class="label">学科</label><select><option>数学</option><option>语文</option><option>英语</option><option>科学</option></select></div>
+      </div>
+      <div class="row">
+        <div><label class="label">年级</label><select><option>三年级</option><option>四年级</option><option>五年级</option></select></div>
+        <div><label class="label">常用课时</label><select><option>40分钟</option><option>45分钟</option></select></div>
+      </div>
+      <label class="label">我的教学特点</label>
+      <textarea>注重课堂互动，希望AI生成的内容有真实课堂感，结果先给我审核，不直接替我发布。</textarea>
+      <button class="primary" style="margin-top:12px" onclick="toast('个人档案已保存')">保存我的设置</button>
+    </div>
+    <div class="card">
+      <h3>我的AI偏好</h3>
+      <div class="task"><b>生成结果默认风格</b><small>清晰、实用、适合课堂直接修改</small></div>
+      <div class="task"><b>输出前是否需要审核</b><small>已开启 · AI不会直接代替教师做最终决定</small></div>
+      <div class="task"><b>提醒</b><small>工作日 08:00 推送今日教学任务</small></div>
+      <div class="task"><b>隐私</b><small>敏感学生信息默认提醒，减少不必要的数据输入</small></div>
+    </div>
+  </div>
+  <div class="section"><div><h2>我的AI使用记录</h2><p class="muted small">帮助你看到AI真正帮你完成了哪些工作</p></div></div>
+  <div class="grid g4">
+    <div class="card"><span class="kpi-label">本月AI任务</span><div class="stat">86</div><span class="tag green">持续使用</span></div>
+    <div class="card"><span class="kpi-label">预计节省</span><div class="stat">21.6h</div><span class="tag">示例数据</span></div>
+    <div class="card"><span class="kpi-label">我的工作流</span><div class="stat">8</div><span class="tag purple">可复用</span></div>
+    <div class="card"><span class="kpi-label">我的智能体</span><div class="stat">3</div><span class="tag orange">已启用</span></div>
+  </div>
+</section>
+
+</div></main></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const pages=document.querySelectorAll('.page');
+function go(id){pages.forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.p===id));window.scrollTo(0,0)}
+document.querySelectorAll('.nav button').forEach(x=>x.onclick=()=>go(x.dataset.p));
+function toast(s){let t=document.getElementById('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2100)}
+function focusSuper(){document.getElementById('superInput').focus();window.scrollTo({top:180,behavior:'smooth'})}
+function fillSuper(v){document.getElementById('superInput').value=v;focusSuper()}
+function runSuper(){
+  let v=document.getElementById('superInput').value.trim();
+  if(!v){toast('先输入你想完成的教学任务');return}
+  toast('AI正在拆解任务……');
+  setTimeout(()=>{go('prepare');document.getElementById('topic').value=v.includes('分数')?'分数的初步认识':'三年级数学教学任务';document.getElementById('goal').value='AI已识别任务：'+v+'\\n\\n建议生成：教学目标 + 教学活动 + 课堂提问 + 分层作业 + 课件结构。';plan()},450)
+}
+function plan(){
+  let t=document.getElementById('topic').value,g=document.getElementById('grade').value,d=document.getElementById('plan');
+  d.style.display='block';
+  d.innerHTML=`<h4>${g}数学《${t}》· 备课包初稿</h4>
+  <ul>
+    <li><b>教学目标：</b>理解分数基本含义，结合图形与生活情境认识几分之一。</li>
+    <li><b>课堂结构：</b>情境导入 → 小组操作 → 图形表示 → 分数表达 → 生活应用。</li>
+    <li><b>互动活动：</b>“公平分披萨”小组任务，让学生先表达再归纳。</li>
+    <li><b>课堂提问：</b>为什么一定要平均分？分子和分母分别表示什么？</li>
+    <li><b>分层作业：</b>基础题 + 情境题 + 开放探究题。</li>
+  </ul>
+  <span class="tag green">AI生成</span><span class="tag">教师审核</span>
+  <div style="margin-top:10px">
+    <button class="secondary" onclick="go('ppt')">继续生成课件 →</button>
+    <button class="secondary" style="margin-left:6px" onclick="go('question')">继续生成练习 →</button>
+  </div>`;
+}
+function ppt(){document.getElementById('pptResult').innerHTML='<h4>《三年级数学｜分数的初步认识》PPT结构</h4><ol><li>情境导入：一块披萨如何公平分？</li><li>认识平均分</li><li>用图形表示四分之一</li><li>认识分数组成</li><li>生活中的分数互动</li><li>即时练习</li><li>课堂小结</li><li>课后拓展</li></ol><span class="tag green">8页建议结构</span><span class="tag">来自备课包</span>'
+}
+function questions(){document.getElementById('qresult').innerHTML='<h4>分数的初步认识 · 练习题草稿</h4><ol><li>一个圆平均分成4份，其中1份是这个圆的（ ）。</li><li>哪个图形能表示1/3？请说明理由。</li><li>一张纸平均分成8份，取其中3份，是这张纸的几分之几？</li><li>用图形表示2/5，并说说分子和分母的含义。</li><li>生活中哪里会用到分数？举例说明。</li></ol><span class="tag green">AI生成</span><span class="tag">待教师审核</span><span class="tag purple">含答案依据</span>'
+}
+function send(){
+  let i=document.getElementById('chat'),v=i.value.trim();if(!v)return;
+  let m=document.getElementById('messages');m.innerHTML+='<div class="msg me">'+v+'</div>';i.value='';
+  setTimeout(()=>{m.innerHTML+='<div class="msg ai">收到。我会把任务拆成：<b>任务理解 → 调取模板/知识 → 教案 → 课件结构 → 课堂问题 → 作业</b>。每一步都保留审核节点，不直接代替教师做最终判断。<br><br><span class="muted tiny">MVP演示：真实版本可接入我的知识库、模型与工具执行。</span></div>';m.scrollTop=m.scrollHeight},400)
+}
+</script>
+</body>
+</html>
